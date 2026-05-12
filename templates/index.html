@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+    <title>Your To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .task-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+        }
+
+        .task-info {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .task-actions a {
+            margin-left: 8px;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .empty {
+            font-style: italic;
+            color: #666;
+        }
+
+        .add-form {
+            margin-top: 25px;
+        }
+
+        input {
+            padding: 8px;
+            margin-right: 8px;
+        }
+
+        button {
+            padding: 8px 12px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div>
+            <h1>Your Tasks</h1>
+            <p>Logged in as <strong>{{ username }}</strong></p>
+        </div>
+        <div>
+            <a href="/logout">Log Out</a>
+        </div>
+    </div>
+
+    {% for entry in todolist %}
+        <div class="task-row">
+            <div class="task-info">
+                <div class="{% if entry.status == 'done' %}done{% endif %}">
+                    {{ entry.what_to_do|safe }}
+                </div>
+                <div>{{ entry.due_date|safe }}</div>
+            </div>
+
+            <div class="task-actions">
+                <a href="/mark/{{ entry.what_to_do }}">mark as done</a>
+                <a href="/delete/{{ entry.what_to_do }}">delete</a>
+            </div>
+        </div>
+    {% else %}
+        <p class="empty">No tasks yet for this account.</p>
+    {% endfor %}
+
+    <div class="add-form">
+        <form action="/add" method="post">
+            <input type="text" name="what_to_do" placeholder="Add a new item" required>
+            <input type="text" name="due_date" placeholder="Due date">
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</body>
+</html>
