@@ -67,6 +67,21 @@ This project uses a split architecture:
 5. The database stores users and user specific tasks.
 
 
+## Screenshots
+
+### Cloud login page
+![Cloud login page](screenshots/cloud-login-page.png)
+
+### Cloud register page
+![Cloud register page](screenshots/cloud-register-page.png)
+
+### Cloud user 1 dashboard
+![Cloud user 1 dashboard](screenshots/cloud-user1-dashboard.png)
+
+### Cloud user 2 dashboard
+![Cloud user 2 dashboard](screenshots/cloud-user2-dashboard.png)
+
+
 ## Project Structure
 
 ```text
