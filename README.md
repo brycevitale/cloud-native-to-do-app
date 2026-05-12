@@ -50,12 +50,12 @@ The main extension was changing the application from a shared todo list into a m
 
 This project uses a split architecture:
 
-**Frontend:** Flask app in `todolist.py`
-**Backend API:** Flask API in `todolist_api.py`
-**Database:** SQLite database in `todolist.db`
-**Containerization:** Docker
-**Cloud backend hosting:** Google Cloud VM
-**Cloud frontend hosting:** Google Kubernetes Engine (GKE)
+- **Frontend:** Flask app in `todolist.py`
+- **Backend API:** Flask API in `todolist_api.py`
+- **Database:** SQLite database in `todolist.db`
+- **Containerization:** Docker
+- **Cloud backend hosting:** Google Cloud VM
+- **Cloud frontend hosting:** Google Kubernetes Engine (GKE)
 
 
 ### How the pieces work together
