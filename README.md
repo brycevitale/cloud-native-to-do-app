@@ -1,6 +1,6 @@
-# Cloud Native Multi User ToDo App
+# Cloud Native To-Do App
 
-This project began as Homework 4 for my Cloud Computing course and was extended into a more complete cloud deployment project. The original version already separated the frontend and backend into different components, but it still functioned as one shared task list. For the final project, I redesigned it into a multi user todo application with authentication, per user task ownership, and a cleaner frontend layout.
+This project began as Homework 4 for my Cloud Computing course and was extended into a more complete cloud deployment project. The original version already separated the frontend and backend into different components, but it still functioned as one shared task list. For the final project, I redesigned it into a multi user to-do application with authentication, per user task ownership, and a cleaner frontend layout.
 
 The final version includes user registration, login, logout, session based user tracking, a redesigned database, a Dockerized frontend, a backend API running on a Google Cloud VM, and frontend deployment through Kubernetes.
 
@@ -26,7 +26,7 @@ In the final version:
 
 ## What I Added Beyond Homework 4
 
-The main extension was changing the application from a shared todo list into a multi user cloud application.
+The main extension was changing the application from a shared to-do list into a multi user cloud application.
 
 
 ### Backend changes
