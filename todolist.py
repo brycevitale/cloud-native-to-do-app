@@ -5,7 +5,7 @@ import requests
 import os
 
 app = Flask(__name__)
-app.secret_key = "final-project-secret-key"
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
 # default to localhost for local testing
 TODO_API_URL = "http://" + os.environ.get("TODO_API_IP", "127.0.0.1") + ":5001"
