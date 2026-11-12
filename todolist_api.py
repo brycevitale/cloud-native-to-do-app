@@ -4,12 +4,32 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import urllib
 import json
+import os
+from itsdangerous import URLSafeTimedSerializer, BadSignature
 
 DATABASE = "todolist.db"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+# ** authentication tokens **
+token_serializer = URLSafeTimedSerializer(
+    os.environ["API_TOKEN_SECRET"],
+    salt="todo-api"
+)
+# ** token verification **
+def verify_token(username):
+    auth_header = request.headers.get("Authorization", "")
 
+    if not auth_header.startswith("Bearer "):
+        return False
+
+    token = auth_header[7:]
+
+    try:
+        token_username = token_serializer.loads(token, max_age=3600)
+        return token_username == username
+    except BadSignature:
+        return False
 
 @app.route("/api/register", methods=["POST"])
 def register_user():
@@ -81,13 +101,17 @@ def login_user():
         "result": True,
         "message": "Login successful.",
         "user_id": user[0],
-        "username": user[1]
+        "username": user[1],
+        "token": token_serializer.dumps(user[1])
     })
 
 
 @app.route("/api/items/<username>")
 def get_items(username):
     # only pull tasks for the user that is logged in
+    # check the user's token
+    if not verify_token(username):
+        return jsonify({"message": "Unauthorized."}), 401
     db = get_db()
 
     user = db.execute(
@@ -120,6 +144,10 @@ def get_items(username):
 
 @app.route("/api/items/<username>", methods=["POST"])
 def add_item(username):
+    # check the user's token
+    if not verify_token(username):
+        return jsonify({"message": "Unauthorized."}), 401
+
     # add a task for the current user
     data = request.json
     what_to_do = data.get("what_to_do", "").strip()
@@ -149,6 +177,10 @@ def add_item(username):
 
 @app.route("/api/items/<username>/<item>", methods=["DELETE"])
 def delete_item(username, item):
+    # check the user's token
+    if not verify_token(username):
+        return jsonify({"message": "Unauthorized."}), 401
+
     # delete the task that matches this user
     item = urllib.parse.unquote(item)
     db = get_db()
@@ -175,6 +207,10 @@ def delete_item(username, item):
 
 @app.route("/api/items/<username>/<item>", methods=["PUT"])
 def update_item(username, item):
+    # check the user's token
+    if not verify_token(username):
+        return jsonify({"message": "Unauthorized."}), 401
+        
     # mark the task as done for this user
     item = urllib.parse.unquote(item)
     db = get_db()

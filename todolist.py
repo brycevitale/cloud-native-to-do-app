@@ -11,17 +11,31 @@ app.secret_key = os.environ["FLASK_SECRET_KEY"]
 TODO_API_URL = "http://" + os.environ.get("TODO_API_IP", "127.0.0.1") + ":5001"
 
 
+# ** API authentication **
+def api_headers():
+    return {
+        "Authorization": "Bearer " + session["api_token"]
+    }
+
+
 @app.route("/")
 def home():
     # if nobody is logged in yet, send them to login
-    if "username" not in session:
+    if "username" not in session or "api_token" not in session:
         return redirect(url_for("login"))
 
     username = session["username"]
 
-    resp = requests.get(TODO_API_URL + "/api/items/" + username)
-    tdlist = resp.json()
+    resp = requests.get(
+        TODO_API_URL + "/api/items/" + username,
+        headers=api_headers()
+    )
 
+    if resp.status_code == 401:
+        session.clear()
+        return redirect(url_for("login"))
+
+    tdlist = resp.json()
     return render_template("index.html", todolist=tdlist, username=username)
 
 
@@ -60,8 +74,9 @@ def login():
         data = resp.json()
 
         if data.get("result"):
-            # store the username in session
+            # ** save login session **
             session["username"] = data["username"]
+            session["api_token"] = data["token"]
             return redirect(url_for("home"))
 
         return render_template("login.html", message=data.get("message", "Login failed."))
@@ -78,44 +93,63 @@ def logout():
 
 @app.route("/add", methods=["POST"])
 def add_entry():
-    if "username" not in session:
+    if "username" not in session or "api_token" not in session:
         return redirect(url_for("login"))
 
     username = session["username"]
 
-    requests.post(
+    resp = requests.post(
         TODO_API_URL + "/api/items/" + username,
         json={
             "what_to_do": request.form["what_to_do"],
             "due_date": request.form["due_date"]
-        }
+        },
+        headers=api_headers()
     )
+
+    if resp.status_code == 401:
+        session.clear()
+        return redirect(url_for("login"))
 
     return redirect(url_for("home"))
 
 
 @app.route("/delete/<item>")
 def delete_entry(item):
-    if "username" not in session:
+    if "username" not in session or "api_token" not in session:
         return redirect(url_for("login"))
 
     username = session["username"]
     item = urllib.parse.quote(item)
 
-    requests.delete(TODO_API_URL + "/api/items/" + username + "/" + item)
+    resp = requests.delete(
+        TODO_API_URL + "/api/items/" + username + "/" + item,
+        headers=api_headers()
+    )
+
+    if resp.status_code == 401:
+        session.clear()
+        return redirect(url_for("login"))
 
     return redirect(url_for("home"))
 
 
 @app.route("/mark/<item>")
 def mark_as_done(item):
-    if "username" not in session:
+    if "username" not in session or "api_token" not in session:
         return redirect(url_for("login"))
 
     username = session["username"]
     item = urllib.parse.quote(item)
 
-    requests.put(TODO_API_URL + "/api/items/" + username + "/" + item)
+    resp = requests.put(
+        TODO_API_URL + "/api/items/" + username + "/" + item,
+        headers=api_headers()
+    )
+
+    if resp.status_code == 401:
+        session.clear()
+        return redirect(url_for("login"))
 
     return redirect(url_for("home"))
 
