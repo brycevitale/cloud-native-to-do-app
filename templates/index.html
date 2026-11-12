@@ -229,8 +229,8 @@
                 <div class="task-row {% if entry.status == 'done' %}done{% endif %}">
                     <div class="task-main">
                         <!-- task name and date -->
-                        <div class="task-name">{{ entry.what_to_do|safe }}</div>
-                        <div class="task-date">Due: {{ entry.due_date|safe }}</div>
+                        <div class="task-name">{{ entry.what_to_do }}</div>
+                        <div class="task-date">Due: {{ entry.due_date }}</div>
                     </div>
 
                     <div class="task-actions">
